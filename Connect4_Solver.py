@@ -214,60 +214,30 @@ class MonteCarlo:
         for i in range(n):
             self.MCTS()
         return self.check()
-        
-        
-def alphabetac4(state,depth,a,b,player):
-  global count
-  temp1 =state.p1board
-  temp2 = state.p2board
-  p = state.possible()
-  point = 0
-  if state.won(2):
-    return [-100]
-  elif state.won(1):
-    return [-100]
-  if len(p) == 0:
-    return [0]
-  if depth == 0:
-    p1 = state.eval(1)
-    p2 = state.eval(2)
-    if player == 2:
-        return [p2-p1]
-    elif player == 1:
-        return [p1-p2]
-  value = -100
-  for node in p:
-      count += 1
-      state.add(node,player)
-      v = -alphabetac4(state,depth-1,-b,-a,3-player)[0]
-      if v > value:
-        value = v
-        point = node
-      a = max(a,value)
-      state.p1board = temp1
-      state.p2board = temp2
-      if a >= b:
-          return [a,point]
-  return value,point
-  
-  
-count = 0    
-MCTS = MonteCarlo()
-state = Connect4Bit()
-state.display()
-while 1:
-    if state.won(1):
-        print('Player 1 (R) wins!!!!!!!!')
-        break
-    elif state.won(2):
-        print('Player 2 (Y) wins!!!!!!!!')
-        break
-    count = 0
-    index = int(input('Your move: ')) #alphabetac4(state,10,-100,100, 1)
-    #print('AB: ', index)
-    state.add(index,1)
-    state.display()
-    index = MCTS.main(state, 5000)
-    print("MCTS: ", index)
-    state.add(index,2)
-    state.display()
+
+# Interfaces with GUI
+class Connect4_Solver():
+   def __init__(self):
+      self.game = Connect4Bit()
+      self.solver = MonteCarlo()
+      self.MCTS_iterations = 5000
+      # Define player 1 as player, player 2 as AI
+
+   # Player adds piece
+   def add_player_piece(self, col: int):
+      self.game.add(col, 1)
+
+   # AI adds piece
+   def add_ai_piece(self, col: int):
+      self.game.add(col,2)
+
+   # Predicts next ai move
+   # Returns col to move
+   def ai_predict(self) -> int:
+      col = self.solver.main(self.game, self.MCTS_iterations)
+      return col
+
+   def reset(self):
+      self.game = Connect4Bit()
+      self.solver = MonteCarlo()
+

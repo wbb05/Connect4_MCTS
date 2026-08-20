@@ -40,6 +40,7 @@ class Connect4Bit:
     temp = board & (board << 1)
     if temp & (temp << 2):
       return True
+
     temp = board & (board << 8)
     if temp & (temp << 16):
       return True
@@ -220,7 +221,7 @@ class Connect4_Solver():
    def __init__(self):
       self.game = Connect4Bit()
       self.solver = MonteCarlo()
-      self.MCTS_iterations = 5000
+      self.MCTS_iterations = 5000 # Default
       # Define player 1 as player, player 2 as AI
 
    # Player adds piece
@@ -240,4 +241,17 @@ class Connect4_Solver():
    def reset(self):
       self.game = Connect4Bit()
       self.solver = MonteCarlo()
+
+   
+   # Changes number of iterations
+   # Accepts Easy, Medium, Hard
+   # TODO: Correct number of iterations?
+   def change_level(self, level: str):
+       if level == "Easy":
+          self.MCTS_iterations = 1000
+       elif level == "Medium":
+          self.MCTS_iterations = 5000
+       elif level == "Hard":
+          self.MCTS_iterations = 10000
+       
 

@@ -18,13 +18,13 @@ class Connect4_GUI:
         mainframe.rowconfigure(3, weight= 1)
 
         # Select buttons
-        ttk.Button(mainframe, text= "Select 0", command= self.select0).grid(column= 1, row = 1, sticky=(N, W, E, S))
-        ttk.Button(mainframe, text= "Select 1", command= self.select1).grid(column= 2, row = 1, sticky=(N, W, E, S))
-        ttk.Button(mainframe, text= "Select 2", command= self.select2).grid(column= 3, row = 1, sticky=(N, W, E, S))
-        ttk.Button(mainframe, text= "Select 3", command= self.select3).grid(column= 4, row = 1, sticky=(N, W, E, S))
-        ttk.Button(mainframe, text= "Select 4", command= self.select4).grid(column= 5, row = 1, sticky=(N, W, E, S))
-        ttk.Button(mainframe, text= "Select 5", command= self.select5).grid(column= 6, row = 1, sticky=(N, W, E, S))
-        ttk.Button(mainframe, text= "Select 6", command= self.select6).grid(column= 7, row = 1, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Select 0", command= self.select0).grid(column= 1, row = 2, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Select 1", command= self.select1).grid(column= 2, row = 2, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Select 2", command= self.select2).grid(column= 3, row = 2, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Select 3", command= self.select3).grid(column= 4, row = 2, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Select 4", command= self.select4).grid(column= 5, row = 2, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Select 5", command= self.select5).grid(column= 6, row = 2, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Select 6", command= self.select6).grid(column= 7, row = 2, sticky=(N, W, E, S))
 
         # Canvas
         canvas_width = 550
@@ -32,10 +32,9 @@ class Connect4_GUI:
         self.board_rows = 6
         self.board_cols = 7
         self.canvas = Canvas(root, width=canvas_width, height=canvas_height, bg="white")
-        self.canvas.grid(column= 0, row = 2, columnspan= 7, sticky = (N, W, E, S))
+        self.canvas.grid(column= 0, row = 3, columnspan= 7, sticky = (N, W, E, S))
 
         # Add circles (ovals)
-        # TODO: Add padding    
         self.cells = [[0 for _ in range(self.board_cols)] for _ in range(self.board_rows)]
 
         padding = 20
@@ -57,16 +56,26 @@ class Connect4_GUI:
             x1 = canvas_width / self.board_cols - padding
 
         # Reset button
-        ttk.Button(mainframe, text= "Reset", command= self.reset).grid(column= 1, row = 3, sticky=(N, W, E, S))
+        ttk.Button(mainframe, text= "Reset", command= self.reset).grid(column= 1, row = 1, sticky=(N, W, E, S))
 
         # Text box
         self.turn_text = StringVar()
         self.turn_text.set("Red's Turn")
-        ttk.Label(mainframe, textvariable= self.turn_text).grid(column=2, row=3, sticky=W)
+        ttk.Label(mainframe, textvariable= self.turn_text).grid(column=2, row=1, sticky=W)
 
         # Play AI checkbox
         self.ai_play = StringVar()
-        ttk.Checkbutton(mainframe, text='Play AI',variable=self.ai_play, onvalue=1, offvalue=0).grid(column= 3, row= 3, sticky= (N, W, E, S))
+        ttk.Checkbutton(mainframe, text='Play AI',variable=self.ai_play, onvalue=1, offvalue=0).grid(column= 3, row= 1, sticky= (N, W, E, S))
+
+        # AI level combobox
+        self.ai_level = StringVar()
+        ai_level_combobox = ttk.Combobox(mainframe, textvariable=self.ai_level, 
+                                         values= ('Easy', 'Medium', 'Hard'))
+        ai_level_combobox.grid(column=4, row= 1, columnspan=2, sticky= W)
+        self.ai_level.set('Medium')
+
+        # Event listener
+        ai_level_combobox.bind("<<ComboboxSelected>>", self.change_ai_level)
 
         # State variable: turn
         # 0: Red 
@@ -151,10 +160,14 @@ class Connect4_GUI:
 
         self.turn = not self.turn
 
+    def change_ai_level(self, event):
+        self.AI.change_level(self.ai_level.get())
+
     # Resets board
     def reset(self):
         # Reset AI
         self.AI.reset()
+        self.AI.change_level(self.ai_level.get())
 
         # Reset turn
         self.turn = 0
